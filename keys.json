@@ -1,0 +1,13 @@
+{
+  "algorithm": "Ed25519",
+  "dataset": "morpheus-ai-base-data",
+  "keys": [
+    {
+      "id": "dataset/morpheus-base",
+      "public_key": "ed25519:ff449971b876d883992588088718544def05b13a9a239ffb24c3763a8e18c181",
+      "status": "current"
+    }
+  ],
+  "provenance": "Public key for verifying morpheus-ai-base-data provenance receipts. Snapshots are produced and signed by DRM3 Labs. This file is the verification anchor - checking a receipt needs only this repo, no network calls.",
+  "generated_at": "2026-07-05T17:39:33.406Z"
+}

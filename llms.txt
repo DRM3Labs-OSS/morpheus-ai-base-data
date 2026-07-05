@@ -1,0 +1,69 @@
+# morpheus-ai-base-data
+
+Signed, portable snapshot of the Morpheus AI network's on-chain activity on Base
+mainnet, decoded into a queryable SQL database. Gzip SQL blob plus an Ed25519
+provenance receipt that verifies against a key committed to this repo, with no
+network calls. Public domain (CC0).
+
+This file tells an agent how to fetch, verify, and query the dataset end to end.
+Run the steps in order from a clone of this repo. Replace <BLOCK> with the
+watermark_block in manifest.json.
+
+## Facts
+
+- The committed files (schema.sql, manifest.json, morpheus-ai-base-data.receipt.json,
+  keys.json) describe and authenticate the data.
+- The data itself is a GitHub Release asset named morpheus-ai-base-data-<BLOCK>.sql.gz,
+  NOT committed to git. Get it from the repo's Releases.
+- Verification anchor is keys.json in this repo. Do not fetch keys from anywhere else.
+- Amounts are wei-scale strings (divide by 1e18 for MOR). Timestamps are unix seconds UTC.
+
+## Steps
+
+1. Read the manifest and note the values you will check against.
+   BLOCK=$(node -e "console.log(require('./manifest.json').watermark_block)")
+   Read manifest.json: fields sha256, byte_size, asset, watermark_block, tables.
+
+2. Download the Release asset for this snapshot.
+   Fetch the asset named in manifest.json ("asset") from the repo's GitHub Releases,
+   for example:
+   curl -L -o "$(node -e "console.log(require('./manifest.json').asset)")" \
+     "https://github.com/DRM3Labs-OSS/morpheus-ai-base-data/releases/download/v-$BLOCK/morpheus-ai-base-data-$BLOCK.sql.gz"
+
+3. Install dependencies and verify. This checks sha256, the receipt signature, that
+   the receipt was signed by keys.json's key, that it commits to this manifest, and
+   that schema.sql matches. It makes no network calls.
+   npm install
+   node verify.mjs morpheus-ai-base-data-$BLOCK.sql.gz
+   Require exit code 0 and the line "VERIFIED". If it fails, STOP and do not use the data.
+
+4. Decompress.
+   gunzip -k morpheus-ai-base-data-$BLOCK.sql.gz
+
+5. Build a local database (SQLite). Apply the schema first, then the data.
+   sqlite3 morpheus.db < schema.sql
+   sqlite3 morpheus.db < morpheus-ai-base-data-$BLOCK.sql
+
+6. Query it. Tables and columns are documented in README.md and schema.sql.
+   Ready-made queries are in queries/examples.sql:
+   sqlite3 morpheus.db < queries/examples.sql
+   Single query example:
+   sqlite3 morpheus.db "SELECT provider, COUNT(*) AS sessions FROM sessions GROUP BY provider ORDER BY sessions DESC LIMIT 5;"
+
+   DuckDB alternative (attach the SQLite file, no conversion):
+   duckdb -c "INSTALL sqlite; LOAD sqlite; ATTACH 'morpheus.db' AS m (TYPE sqlite); SELECT * FROM m.network_economics;"
+
+## Tables
+
+sessions, providers, provider_stats, bids, models, mor_holders, price_history,
+network_economics, economics_history, builder_subnets, builder_stakes,
+builder_events, wallet_stats, gas_costs, diamond_upgrades.
+See README.md "Data dictionary" for the meaning of every column.
+
+## Scope
+
+A passing verification proves these exact bytes were produced and signed by DRM3
+Labs and were not altered. It does not make the data trustless: the numbers are
+indexed from Base mainnet and are re-derivable there. Use the dataset when
+trusting the producer is acceptable, or as a reproducible starting point when it
+is not. watermark_block is the completeness line; data past it may be partial.

@@ -1,0 +1,12 @@
+node_modules/
+
+# The data blob is a GitHub Release asset, never committed to git.
+dist/
+*.sql.gz
+
+# Decompressed working copies of the snapshot. schema.sql IS committed.
+morpheus-ai-base-data*.sql
+!schema.sql
+
+.wrangler/
+.DS_Store

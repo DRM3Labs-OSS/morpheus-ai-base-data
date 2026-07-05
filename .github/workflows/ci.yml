@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install sqlite3
+        run: sudo apt-get update && sudo apt-get install -y sqlite3
+
+      - name: Provenance and schema checks (no Release blob needed)
+        run: npm run check
+
+      - name: Sanity-parse schema and example queries
+        run: |
+          set -euo pipefail
+          sqlite3 :memory: < schema.sql
+          # Load the schema, then run the shipped examples against the empty
+          # database. Any SQL parse error fails the build.
+          cp schema.sql /tmp/build.sql
+          cat queries/examples.sql >> /tmp/build.sql
+          sqlite3 -bail :memory: < /tmp/build.sql > /dev/null
+
+      - name: Prose gate (no em/en dashes, no apologetic framing, no stack names)
+        run: |
+          set -uo pipefail
+          files=$(printf '%s\n' README.md $(find docs -name '*.md'))
+          fail=0
+
+          if grep -rnP "[\x{2012}\x{2013}\x{2014}\x{2015}\x{2212}]" $files; then
+            echo "::error::em/en dash found (use hyphens, commas, colons, parentheses)"
+            fail=1
+          fi
+
+          if grep -rniE "honest|honestly|stated plainly|skeptical|trust us|not a request to trust|as if|we promise|to be clear|full disclosure" $files; then
+            echo "::error::apologetic/defensive framing found (state everything as confident fact)"
+            fail=1
+          fi
+
+          if grep -rniE "cloudflare|durable object|wrangler|alchemy|morscan" $files; then
+            echo "::error::implementation-stack name found in prose (describe as RPC / source index)"
+            fail=1
+          fi
+
+          if grep -rnE "\bD1\b" $files; then
+            echo "::error::stack name D1 found in prose (say source index / source database)"
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then
+            echo "Prose gate failed."
+            exit 1
+          fi
+          echo "Prose gate passed: no dashes, no apologetic framing, no stack names."

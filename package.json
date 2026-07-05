@@ -1,0 +1,21 @@
+{
+  "name": "morpheus-ai-base-data",
+  "version": "0.1.0",
+  "description": "Signed, portable snapshot of Morpheus AI network on-chain activity, decoded from Base mainnet. Gzip SQL plus an Ed25519 provenance receipt verifiable against an in-repo key.",
+  "type": "module",
+  "license": "CC0-1.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "verify": "node verify.mjs",
+    "check": "node verify.mjs --check",
+    "snapshot": "node scripts/make-snapshot.mjs"
+  },
+  "dependencies": {
+    "@drm3labs-oss/provenance": "^0.2.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.107.0"
+  }
+}
