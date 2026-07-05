@@ -105,7 +105,7 @@ Some columns cannot be reconstructed from event topics alone, so the indexer rea
 | `gas_costs` | Base tx receipts | `eth_getTransactionReceipt` on each session open/close tx (gas used, effective price, ETH cost) |
 | `provider_stats`, `wallet_stats` | derived | rollups computed from `sessions` (counts, durations, outcomes) |
 
-The MOR/USD price source is the Uniswap v3 MOR/WETH 0.3% pool at `0x37ecd41f5a01b23a3d9bb3b4ddfef4ed455d6fd3` (token0 = WETH, token1 = MOR), read against the Chainlink ETH/USD aggregator on Base at `0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70`. This is an on-chain read, not a third-party exchange feed.
+The MOR/USD price source is the Uniswap v3 MOR/WETH 0.3% pool at `0x37ecd41f5a01b23a3d9bb3b4ddfef4ed455d6fd3` (token0 = WETH, token1 = MOR), read against the Chainlink ETH/USD aggregator on Base at `0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70`. This is an on-chain read, not a third-party exchange feed. The `price_history` series spans the pool's full life on Base, from its on-chain creation at block 20,211,651 (2024-09-24) to the watermark, read at intervals across that range, so it is a full history from the DEX pool origin rather than a recent window.
 
 ## How the chain is read
 

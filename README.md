@@ -5,11 +5,11 @@
 [![Provenance Ed25519 signed](https://img.shields.io/badge/Provenance-Ed25519_signed-2ea44f.svg)](./morpheus-ai-base-data.receipt.json)
 [![Data Morpheus on Base](https://img.shields.io/badge/Data-Morpheus_on_Base-6f42c1.svg)](#coverage)
 [![Format SQLite / DuckDB](https://img.shields.io/badge/Format-SQLite_%2F_DuckDB-fe7d37.svg)](#open-it)
-[![Watermark block 48241881 / 2026-07-05](https://img.shields.io/badge/Watermark-block_48241881_%2F_2026--07--05-informational.svg)](./manifest.json)
+[![Watermark block 48249693 / 2026-07-05](https://img.shields.io/badge/Watermark-block_48249693_%2F_2026--07--05-informational.svg)](./manifest.json)
 
 A signed, portable snapshot of the **Morpheus AI network's on-chain activity on Base mainnet**, decoded from raw events into a queryable SQL database. One gzip file, one manifest, one provenance receipt you can verify against a key committed to this repo.
 
-The snapshot in this repo covers Base mainnet through block **48241881** (see [`manifest.json`](./manifest.json) for the exact watermark, row counts, and hashes of the copy you hold).
+The snapshot in this repo covers Base mainnet through block **48249693** (see [`manifest.json`](./manifest.json) for the exact watermark, row counts, and hashes of the copy you hold).
 
 ## Updates
 
@@ -17,16 +17,16 @@ DRM3 Labs publishes refreshed snapshots periodically. Each snapshot is signed an
 
 ## Coverage
 
-Coverage is per contract, not uniform: each part of the dataset scans a contract from its Base deploy block, the first block on Base where that contract has code. The overall span runs from Base block **15,002,375 (2024-05-27)**, where the MOR token was deployed on Base, to the watermark at block **48,241,881 (2026-07-05)**. This dataset reaches back to each contract's Base day one.
+Coverage is per contract, not uniform: each part of the dataset scans a contract from its Base deploy block, the first block on Base where that contract has code. The overall span runs from Base block **15,002,375 (2024-05-27)**, where the MOR token was deployed on Base, to the watermark at block **48,249,693 (2026-07-05)**. This dataset reaches back to each contract's Base day one.
 
 | Data | From block | From date | To block | To date |
 |------|-----------|-----------|----------|---------|
-| MOR holders | 15,002,375 | 2024-05-27 | 48,241,881 | 2026-07-05 |
-| Builder subnets/stakes | 24,381,796 | 2024-12-30 | 48,241,881 | 2026-07-05 |
-| Compute sessions | 39,593,197 | 2025-12-17 | 48,241,881 | 2026-07-05 |
-| MOR/USD price | n/a | 2026-04-05 | n/a | 2026-07-05 |
+| MOR holders | 15,002,375 | 2024-05-27 | 48,249,693 | 2026-07-05 |
+| Builder subnets/stakes | 24,381,796 | 2024-12-30 | 48,249,693 | 2026-07-05 |
+| Compute sessions | 39,593,197 | 2025-12-17 | 48,249,693 | 2026-07-05 |
+| MOR/USD price | 20,211,651 | 2024-09-24 | 48,249,693 | 2026-07-05 |
 
-Compute moved to Base recently, so the sessions and marketplace tables begin at the compute contract's Base deploy block 39,593,197 (2025-12-17); the token and builder history run much deeper. The `price_history` series is a separate case: it is a roughly 90-day recording window (2026-04-05 to 2026-07-05, the point at which price recording started), not a replay from the token's DEX origin. Read it as recent price coverage, distinct from the event-derived tables.
+Compute moved to Base recently, so the sessions and marketplace tables begin at the compute contract's Base deploy block 39,593,197 (2025-12-17); the token and builder history run much deeper. The `price_history` series runs the full length of the MOR/WETH pool: from the pool's on-chain creation at Base block 20,211,651 (2024-09-24) to the watermark, a complete history from the DEX pool origin.
 
 ## Why this exists
 
@@ -42,14 +42,14 @@ A single SQLite-compatible SQL dump of 15 tables. Highlights of the current snap
 
 | Data | Count | From block | From date | To block | To date |
 |------|-------|-----------|-----------|----------|---------|
-| Compute sessions | 113,200 | 39,593,197 | 2025-12-17 | 48,241,881 | 2026-07-05 |
-| MOR holders | 18,061 wallets | 15,002,375 | 2024-05-27 | 48,241,881 | 2026-07-05 |
-| Compute providers | 21 | 39,593,197 | 2025-12-17 | 48,241,881 | 2026-07-05 |
-| Model bids | 403 across 102 models | 39,593,197 | 2025-12-17 | 48,241,881 | 2026-07-05 |
-| Builder subnets/stakes | 280 / 262 | 24,381,796 | 2024-12-30 | 48,241,881 | 2026-07-05 |
-| MOR/USD price | 2,406 | n/a | 2026-04-05 | n/a | 2026-07-05 |
+| Compute sessions | 113,343 | 39,593,197 | 2025-12-17 | 48,249,693 | 2026-07-05 |
+| MOR holders | 18,061 wallets | 15,002,375 | 2024-05-27 | 48,249,693 | 2026-07-05 |
+| Compute providers | 21 | 39,593,197 | 2025-12-17 | 48,249,693 | 2026-07-05 |
+| Model bids | 403 across 102 models | 39,593,197 | 2025-12-17 | 48,249,693 | 2026-07-05 |
+| Builder subnets/stakes | 280 / 262 | 24,381,796 | 2024-12-30 | 48,249,693 | 2026-07-05 |
+| MOR/USD price | 5,685 | 20,211,651 | 2024-09-24 | 48,249,693 | 2026-07-05 |
 
-Compressed size is 15.8 MB gzip (84.8 MB raw). Full per-table counts are in [`manifest.json`](./manifest.json). The schema is [`schema.sql`](./schema.sql), and it is the exact schema the data was dumped under.
+Compressed size is 16.5 MB gzip (89.3 MB raw). Full per-table counts are in [`manifest.json`](./manifest.json). The schema is [`schema.sql`](./schema.sql), and it is the exact schema the data was dumped under.
 
 ## Uses
 
@@ -133,8 +133,8 @@ Real questions, answered against the snapshot in this repo:
 -- Top providers by lifetime compute sessions served
 SELECT provider, COUNT(*) AS sessions
 FROM sessions GROUP BY provider ORDER BY sessions DESC LIMIT 5;
--- 0xb399e0009784bf0eb871e946643c92dc1055e362   58123
--- 0x5a42cb63f5e994ae01c38e4b515b954ecd092d08   52674
+-- 0xb399e0009784bf0eb871e946643c92dc1055e362   58227
+-- 0x5a42cb63f5e994ae01c38e4b515b954ecd092d08   52689
 ```
 
 ```sql
@@ -146,10 +146,10 @@ FROM mor_holders WHERE CAST(mor_balance_wei AS REAL) > 0;
 ```
 
 ```sql
--- MOR/USD range over the recorded 90-day series
+-- MOR/USD range over the full on-chain price history
 SELECT ROUND(MIN(usd), 4) AS low, ROUND(MAX(usd), 4) AS high, COUNT(*) AS points
 FROM price_history;
--- low 1.2839, high 3.6542, over 2406 points
+-- low 0.5373, high 29.8371, over 5685 points
 ```
 
 ## Data dictionary
@@ -158,7 +158,7 @@ Amounts that live on-chain are stored as **wei-scale decimal strings** (18 decim
 
 ### MOR price and market
 
-**`price_history`** is the MOR/USD time series, read on-chain from a Base DEX (no third-party price feed), roughly one point every ten minutes. Coverage is a recent, roughly 90-day recording window: 2026-04-05 to 2026-07-05, from the point price recording started, not from the token's DEX origin. It powers change-over-time and charting, and is an independent on-chain record of the token's price without trusting an exchange API.
+**`price_history`** is the MOR/USD time series, read on-chain from a Base DEX (no third-party price feed) at regular intervals, roughly hourly across the full span and about every ten minutes in the recent window. Coverage is the full price history: from the MOR/WETH pool's on-chain creation on Base at block 20,211,651 (2024-09-24) to the watermark (2026-07-05), a complete history from the DEX pool origin. It powers change-over-time and charting, and is an independent on-chain record of the token's price without trusting an exchange API.
 
 | column | type | meaning |
 |--------|------|---------|

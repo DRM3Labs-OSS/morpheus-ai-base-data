@@ -4,13 +4,13 @@
   "network": "base-mainnet",
   "description": "On-chain activity of the Morpheus AI network on Base mainnet, decoded from events into a queryable SQL snapshot, complete through watermark_block.",
   "format": "gzip-sql",
-  "generated_at": "2026-07-05T17:39:33.406Z",
-  "watermark_block": 48241881,
-  "chain_head_at_export": 48241901,
-  "asset": "morpheus-ai-base-data-48241881.sql.gz",
-  "sha256": "04be219e43414a3a20b9ebe1fb55bde52f8b4341d5e126c2f0655d8b73e2a7ff",
-  "byte_size": 16517871,
-  "raw_byte_size": 88940498,
+  "generated_at": "2026-07-05T21:59:58.296Z",
+  "watermark_block": 48249693,
+  "chain_head_at_export": 48249713,
+  "asset": "morpheus-ai-base-data-48249693.sql.gz",
+  "sha256": "4df58a47c877e53f09a27aef48e5c67c8bbe622427a9bcbba7a695592acede05",
+  "byte_size": 16535974,
+  "raw_byte_size": 89265613,
   "schema_asset": {
     "file": "schema.sql",
     "sha256": "8c4e8d9d22c2905c7324745ceb54a1e93fd6f434b299998ba385bc9fb616a1a1",
@@ -27,7 +27,7 @@
     },
     {
       "name": "sessions",
-      "rows": 113200
+      "rows": 113343
     },
     {
       "name": "models",
@@ -59,7 +59,7 @@
     },
     {
       "name": "builder_events",
-      "rows": 2410
+      "rows": 2413
     },
     {
       "name": "mor_holders",
@@ -75,7 +75,7 @@
     },
     {
       "name": "price_history",
-      "rows": 2406
+      "rows": 5685
     }
   ],
   "excluded_tables": [
