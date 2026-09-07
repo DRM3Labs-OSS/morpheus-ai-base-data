@@ -1,5 +1,7 @@
 # How this dataset is produced
 
+> **Status: LIVE** - 2026-09-07. Describes how the published snapshot is produced today: the contracts and events indexed, the read and normalization rules, and the `scripts/make-snapshot.mjs` cut plus `verify.mjs` checks that ship in this repo and produced the current watermark 48249693 release.
+
 This document explains how raw Base mainnet chain events become the tables in this dataset, and how to reproduce every number from Base yourself. Every contract address, event topic, deploy block, and parameter below comes from the indexer that produces the snapshot.
 
 The short version: an open-source indexer reads a fixed set of Base L2 contracts with `eth_getLogs`, decodes the events, normalizes them into SQL rows, and a separate tool cuts a point-in-time snapshot at a completeness watermark, gzips it, and signs it with an Ed25519 key committed to this repo. Nothing here needs a private data source. The same contracts and events are readable by anyone with a Base RPC endpoint.
@@ -152,18 +154,18 @@ Raw versus derived:
 
 ## The snapshot: cut, sign, verify
 
-A snapshot is a deterministic export of the chain-derived tables at the watermark, produced by [`scripts/make-snapshot.mjs`](../scripts/make-snapshot.mjs):
+A snapshot is a deterministic export of the chain-derived tables at the watermark, produced by [`scripts/make-snapshot.mjs`](../../scripts/make-snapshot.mjs):
 
 1. Read the watermark. The tool reads `last_event_block` from the indexer's sync state and `last_builder_event_block` from the builder sync state and takes the minimum. It refuses to build if there is no event cursor.
 2. Export. It dumps 15 chain-derived tables as data-only SQL (`providers`, `bids`, `sessions`, `models`, `provider_stats`, `gas_costs`, `network_economics`, `economics_history`, `builder_subnets`, `builder_stakes`, `builder_events`, `mor_holders`, `diamond_upgrades`, `wallet_stats`, `price_history`) and separately captures the schema those tables were dumped under.
 3. Compress and hash. The SQL is gzipped (level 9) and the blob's `sha256` is computed. The schema file is hashed too.
-4. Sign. It builds a canonical `manifest.json` (watermark, chain head at export, per-table row counts, blob sha256 and sizes, schema hash, excluded-table list) and signs an Ed25519 provenance receipt over the canonicalized manifest, using a key derived at path `dataset/morpheus-base`. The public key is written to [`keys.json`](../keys.json), and the receipt to `morpheus-ai-base-data.receipt.json`. The freshly signed receipt is self-verified before the tool exits.
+4. Sign. It builds a canonical `manifest.json` (watermark, chain head at export, per-table row counts, blob sha256 and sizes, schema hash, excluded-table list) and signs an Ed25519 provenance receipt over the canonicalized manifest, using a key derived at path `dataset/morpheus-base`. The public key is written to [`keys.json`](../../keys.json), and the receipt to `morpheus-ai-base-data.receipt.json`. The freshly signed receipt is self-verified before the tool exits.
 
 The signing key is passed in by environment (`DATASET_SIGNING_MNEMONIC`), and the source database by environment (`SOURCE_DB`), so the tool is not wired to any single operator; anyone with a compatible index and the key can produce a snapshot in the same format.
 
 ### Verifying a snapshot offline
 
-Verification touches only files in this repo. There are no network calls and no dependency on any live service. [`verify.mjs`](../verify.mjs) checks five things:
+Verification touches only files in this repo. There are no network calls and no dependency on any live service. [`verify.mjs`](../../verify.mjs) checks five things:
 
 1. the downloaded blob's `sha256` matches `manifest.json`,
 2. the receipt's Ed25519 signature is internally valid,

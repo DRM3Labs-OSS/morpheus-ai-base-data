@@ -34,7 +34,7 @@ The Morpheus network runs on Base as a stream of smart-contract events: sessions
 
 It is public, verifiable, and reproducible. The numbers are re-derivable by anyone from Base; the signature attests who produced this copy and that it has not been altered. Everything here is CC0 (public domain).
 
-For exactly how raw Base chain events become these tables, and how to reproduce the dataset yourself, see [`docs/METHODOLOGY.md`](./docs/METHODOLOGY.md): the indexed contracts and event-to-table mapping, the forward projector plus historical backfill, the completeness watermark, and the snapshot signing and verification steps.
+For exactly how raw Base chain events become these tables, and how to reproduce the dataset yourself, see [`docs/product/METHODOLOGY.md`](./docs/product/METHODOLOGY.md): the indexed contracts and event-to-table mapping, the forward projector plus historical backfill, the completeness watermark, and the snapshot signing and verification steps.
 
 ## What is in it
 
@@ -59,7 +59,7 @@ Concrete ways to consume this snapshot:
 - **Dashboards without a node.** Point SQLite or DuckDB at the file and drive charts and tables directly. The data is already decoded and reconciled, so a dashboard is a few queries, not an indexer.
 - **Bootstrap your own index.** Load the snapshot, then resume live sync from `watermark_block` instead of replaying from each contract's Base deploy block. You start caught up to 2026-07-05 and only fetch the delta from there.
 - **Feed an AI agent.** Hand an agent [`schema.sql`](./schema.sql), the data dictionary below, and [`queries/examples.sql`](./queries/examples.sql), and it can answer network questions against a local database. [`llms.txt`](./llms.txt) is the fetch-verify-query runbook for exactly that.
-- **Cross-check a published stat.** Any Morpheus number you see elsewhere (session counts, provider standings, supply, price) can be checked against this snapshot, and in turn re-derived from Base with the filters in [`docs/METHODOLOGY.md`](./docs/METHODOLOGY.md).
+- **Cross-check a published stat.** Any Morpheus number you see elsewhere (session counts, provider standings, supply, price) can be checked against this snapshot, and in turn re-derived from Base with the filters in [`docs/product/METHODOLOGY.md`](./docs/product/METHODOLOGY.md).
 
 ## Files
 
@@ -72,7 +72,7 @@ Concrete ways to consume this snapshot:
 | `keys.json` | the dataset public key (verification anchor) | yes |
 | `verify.mjs` | one-command verifier | yes |
 | `queries/examples.sql` | worked example queries | yes |
-| `docs/METHODOLOGY.md` | how the data is produced from Base, and how to reproduce it | yes |
+| `docs/product/METHODOLOGY.md` | how the data is produced from Base, and how to reproduce it | yes |
 
 The data blob is large and changes each snapshot, so it lives as a Release download. Everything needed to verify and understand it is committed here.
 
@@ -301,7 +301,7 @@ DRM3 Labs produces and signs each snapshot. The Ed25519 receipt proves authorshi
 
 The snapshot is built by [`scripts/make-snapshot.mjs`](./scripts/make-snapshot.mjs) against a source database that holds the decoded index (schema in `schema.sql`). It reads the watermark, exports the tables above as a data-only SQL dump, captures the schema, gzips and hashes the blob, writes the manifest, and signs a provenance receipt with the `dataset/morpheus-base` key. The source index and signing key are passed in by environment (`SOURCE_DB`, `DATASET_SIGNING_MNEMONIC`), so the tool is not wired to any one operator.
 
-The full account, from Base chain events all the way to the signed blob (indexed contracts and addresses, the event-to-table mapping, the read layer, decode and normalization rules, the watermark, and reproducibility), is in [`docs/METHODOLOGY.md`](./docs/METHODOLOGY.md).
+The full account, from Base chain events all the way to the signed blob (indexed contracts and addresses, the event-to-table mapping, the read layer, decode and normalization rules, the watermark, and reproducibility), is in [`docs/product/METHODOLOGY.md`](./docs/product/METHODOLOGY.md).
 
 ## License
 
